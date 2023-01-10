@@ -1,0 +1,39 @@
+name: Test
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    types: [ opened, synchronize, reopened ]
+
+jobs:
+  test:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: [ '3.7', '3.8', '3.9', '3.10' ]
+
+    steps:
+      - name: Source Code Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Environment Setup (Python ${{ matrix.python-version }})
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Dependencies
+        run: |
+          pip install poetry
+          poetry check
+          poetry install
+
+      - name: Check Code Style
+        run: poetry run flake8
+
+      - name: Test Execution
+        run: poetry run pytest
