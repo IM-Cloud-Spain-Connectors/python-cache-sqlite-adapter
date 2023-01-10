@@ -1,0 +1,3 @@
+# Python Cache SQLite Adapter
+
+
