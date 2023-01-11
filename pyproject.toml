@@ -5,11 +5,32 @@ description = "SQLite implementation of the Cache Interface for Python."
 authors = ["Unay Santisteban <davidunay.santisteban@cloudblue.com>"]
 license = "Apache-2.0"
 readme = "README.md"
-packages = [{ include = "rndi_cache_sqlite_adapter" }]
+packages = [
+    { include = "rndi" }
+]
+repository = ""
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Topic :: Utilities",
+    "Topic :: Software Development :: Libraries",
+]
+keywords = [
+    "rndi",
+    "rnd-integration",
+    "cache",
+    "cache interface",
+    "cache contract",
+]
 
 [tool.poetry.dependencies]
 python = ">=3.8.1,<4"
-rndi-cache-interface = { git = "ssh://git@github.com/othercodes/python-cache-interface.git", branch = "master" }
+rndi-cache-interface = { git = "https://github.com/othercodes/python-cache-interface.git", branch = "master" }
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.2.0"

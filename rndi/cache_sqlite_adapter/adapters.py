@@ -1,3 +1,8 @@
+#
+# This file is part of the Ingram Micro CloudBlue RnD Integration Connectors SDK.
+#
+# Copyright (c) 2023 Ingram Micro. All Rights Reserved.
+#
 import os
 import time
 from sqlite3 import Connection, IntegrityError
@@ -37,7 +42,7 @@ class SQLiteCacheAdapter(Cache):
             # SQLite database is locked until that transaction is committed. The timeout parameter specifies how long
             # the connection should wait for the lock to go away until raising an exception. The default for the timeout
             # parameter is 5.0 (five seconds).
-            'timeout': 15.0
+            'timeout': 15.0,
         }
         self.options.update(options or {})
 
@@ -57,7 +62,7 @@ class SQLiteCacheAdapter(Cache):
 
         connection = Connection(
             os.path.join(self.directory_path, f'{self.name}.sqlite'),
-            **self.options
+            **self.options,
         )
 
         with connection:
@@ -111,7 +116,7 @@ class SQLiteCacheAdapter(Cache):
             if expired_only:
                 connection.execute(self._del_expired_sql, (time.time(),))
             else:
-                connection.execute(self._clear_sql, )
+                connection.execute(self._clear_sql, ())
 
     def __del__(self):
         if self.connection:
