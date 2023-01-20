@@ -8,7 +8,7 @@ import time
 from sqlite3 import Connection, IntegrityError
 from typing import Any, Optional
 
-from rndi.cache_interface.contracts import Cache
+from rndi.cache.contracts import Cache
 import jsonpickle
 
 

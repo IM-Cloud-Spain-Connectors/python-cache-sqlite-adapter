@@ -2,8 +2,8 @@ from typing import List
 
 import pytest
 
-from rndi.cache_interface.contracts import Cache
-from rndi.cache_sqlite_adapter.adapters import SQLiteCacheAdapter
+from rndi.cache.adapters.sqlite.adapter import SQLiteCacheAdapter
+from rndi.cache.contracts import Cache
 
 
 @pytest.fixture
