@@ -17,7 +17,7 @@ pip install rndi-cache-sqlite-adapter
 
 ## The Contract
 
-The used interface is `rndi.cache_interface.contracts.Cache`.
+The used interface is `rndi.cache.contracts.Cache`.
 
 ## The Adapter
 
