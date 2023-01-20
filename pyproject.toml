@@ -30,7 +30,7 @@ keywords = [
 
 [tool.poetry.dependencies]
 python = ">=3.8.1,<4"
-rndi-cache-interface = { git = "https://github.com/othercodes/python-cache-interface.git", branch = "master" }
+rndi-cache-interface = { git = "https://github.com/othercodes/python-cache-interface.git", branch = "feature/module-refactor" }
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.2.0"
@@ -48,7 +48,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.pytest.ini_options]
 testpaths = "tests"
-addopts = "--cov=rndi.cache_sqlite_adapter --cov-report=term-missing:skip-covered --cov-report=html --cov-report=xml"
+addopts = "--cov=rndi.cache.adapters --cov-report=term-missing:skip-covered --cov-report=html --cov-report=xml"
 
 [tool.coverage.run]
 omit = ["tests/*", "venv*/*", "setup.py"]
