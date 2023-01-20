@@ -24,8 +24,8 @@ The used interface is `rndi.cache_interface.contracts.Cache`.
 Just initialize the class you want and use the public methods:
 
 ```python
-from rndi.cache_interface.contracts import Cache
-from rndi.cache_sqlite_adapter.adapters import SQLiteCacheAdapter
+from rndi.cache.contracts import Cache
+from rndi.cache.adapters.sqlite.adapter import SQLiteCacheAdapter
 
 
 def some_process_that_requires_cache(cache: Cache):
