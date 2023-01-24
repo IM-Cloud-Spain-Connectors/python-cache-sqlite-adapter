@@ -8,8 +8,20 @@ import time
 from sqlite3 import Connection, IntegrityError
 from typing import Any, Optional
 
-from rndi.cache.contracts import Cache
 import jsonpickle
+from rndi.cache.contracts import Cache
+
+
+def provide_sqlite_cache_adapter(config: dict) -> Cache:
+    return SQLiteCacheAdapter(
+        directory_path=config.get('CACHE_DIR', '/tmp/cache'),
+        ttl=config.get('CACHE_TTL', 900),
+        name=config.get('CACHE_SQLITE_NAME', 'cache'),
+        options={
+            'check_same_thread': config.get('CACHE_SQLITE_CHECK_SAME_THREAD', 'False') == 'True',
+            'timeout': float(config.get('CACHE_SQLITE_TIMEOUT', 15.0)),
+        },
+    )
 
 
 class SQLiteCacheAdapter(Cache):
