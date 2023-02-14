@@ -1,11 +1,37 @@
+from __future__ import annotations
+
 from logging import LoggerAdapter
-from typing import List
+from typing import List, Optional
 from unittest.mock import patch
 
 import pytest
 from rndi.cache.adapters.sqlite.adapter import provide_sqlite_cache_adapter
 from rndi.cache.contracts import Cache
 from rndi.cache.provider import provide_cache
+
+
+@pytest.fixture
+def counter():
+    class Counter:
+        instance: Optional[Counter] = None
+
+        def __init__(self):
+            self.count = 0
+
+        @classmethod
+        def make(cls, reset: bool = False) -> Counter:
+            if not isinstance(cls.instance, Counter) or reset:
+                cls.instance = Counter()
+            return cls.instance
+
+        def increase(self, step: int = 1) -> Counter:
+            self.count = self.count + step
+            return self
+
+    def __(reset: bool = False) -> Counter:
+        return Counter.make(reset)
+
+    return __
 
 
 @pytest.fixture
