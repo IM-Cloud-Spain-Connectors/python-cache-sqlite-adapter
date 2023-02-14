@@ -1,8 +1,8 @@
-import pytest
 from logging import LoggerAdapter
 from typing import List
 from unittest.mock import patch
 
+import pytest
 from rndi.cache.adapters.sqlite.adapter import provide_sqlite_cache_adapter
 from rndi.cache.contracts import Cache
 from rndi.cache.provider import provide_cache
@@ -16,7 +16,7 @@ def adapters(logger):
         ]
 
         extra = {
-            'sqlite': provide_sqlite_cache_adapter
+            'sqlite': provide_sqlite_cache_adapter,
         }
 
         return [provide_cache(setup, logger(), extra) for setup in setups]

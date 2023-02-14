@@ -41,10 +41,28 @@ flake8-bugbear = "^22.12.6"
 flake8-cognitive-complexity = "^0.1"
 flake8-commas = "^2.1.0"
 flake8-import-order = "^0.18.2"
+flake8-pyproject = "^1.2.2"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.flake8]
+exclude = [
+    ".idea",
+    ".vscode",
+    ".git",
+    "pg_data",
+    "venv",
+    "*/settings/*.py",
+    "*/migrations/*.py",
+    "*nogit*"
+]
+show-source = true
+max-line-length = 120
+import-order-style = "smarkets"
+ignore = ["FI1", "I100", "W503", "FI58"]
+max-cognitive-complexity = 20
 
 [tool.pytest.ini_options]
 testpaths = "tests"
