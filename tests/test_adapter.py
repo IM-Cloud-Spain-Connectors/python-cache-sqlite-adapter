@@ -1,3 +1,6 @@
+import time
+
+
 def test_adapter_cache_should_return_false_if_has_not_cached_key(adapters):
     for adapter in adapters():
         assert not adapter.has('missing-key')
@@ -33,6 +36,13 @@ def test_adapter_cache_should_delete_value_by_key(adapters):
 
         assert not adapter.has('x')
         assert not adapter.has('missing-key')
+
+
+def test_adapter_cache_get_should_update_expiration_if_provided(adapters, counter):
+    for adapter in adapters():
+        adapter.put('x', 'some-value-1', 500)
+        adapter.get('x', ttl=300)
+        assert adapter.get_entry('x').get('expire_at') == round(time.time() + 300)
 
 
 def test_adapter_cache_should_flush_only_expired_values(adapters):

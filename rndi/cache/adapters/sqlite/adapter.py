@@ -88,15 +88,19 @@ class SQLiteCacheAdapter(Cache):
     def has(self, key: str) -> bool:
         return self.get(key) is not None
 
-    def get(self, key: str, default: Any = None) -> Any:
+    def get(self, key: str, default: Any = None, ttl: Optional[int] = None) -> Any:
         try:
             with self.connection as connection:
                 entry = next(connection.execute(self._get_sql, (key,)))
 
-            if time.time() > entry[1]:
+            if round(time.time()) >= entry[1]:
                 with self.connection as connection:
                     connection.execute(self._del_sql, (key,))
                 raise StopIteration
+
+            if ttl is not None:
+                with self.connection as connection:
+                    connection.execute(self._replace_sql, (key, entry[0], ttl + round(time.time())))
 
             return jsonpickle.decode(entry[0])
         except StopIteration:
@@ -110,7 +114,7 @@ class SQLiteCacheAdapter(Cache):
 
     def put(self, key: str, value: Any, ttl: Optional[int] = None) -> Any:
         serialized = jsonpickle.encode(value)
-        expire_at = (self.ttl if ttl is None else ttl) + time.time()
+        expire_at = (self.ttl if ttl is None else ttl) + round(time.time())
         with self.connection as connection:
             try:
                 connection.execute(self._insert_sql, (key, serialized, expire_at))
@@ -126,7 +130,7 @@ class SQLiteCacheAdapter(Cache):
     def flush(self, expired_only: bool = False) -> None:
         with self.connection as connection:
             if expired_only:
-                connection.execute(self._del_expired_sql, (time.time(),))
+                connection.execute(self._del_expired_sql, (round(time.time()),))
             else:
                 connection.execute(self._clear_sql, ())
 
