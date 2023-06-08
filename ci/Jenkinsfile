@@ -16,7 +16,7 @@ def environment = [
 
     RUN_DEPENDENCY_CHECK: false,
 
-    PUBLISH_PACKAGE: true,
+    PUBLISH_PACKAGE: false,
     PACKAGE_TYPE: "zip",
     STORAGE_HOST: "storage.dev.cloud.im",
     STORAGE_PATH: "/home/storage/connect/${env.PROJECT_NAME}",
