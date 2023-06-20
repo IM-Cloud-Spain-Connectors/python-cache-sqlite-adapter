@@ -14,6 +14,8 @@ def environment = [
     SONAR_FILES_TEST: "tests/",
     SONAR_FILES_EXCLUDED: "",
 
+    CHECKMARX_PROJECT_ID: "5b8d4559-4cdd-4791-8668-cf44a318ef01",
+
     RUN_DEPENDENCY_CHECK: false,
 
     PUBLISH_PACKAGE: false,
@@ -267,6 +269,50 @@ def pipelineStages = [
             -Dsonar.python.pylint=venv/bin/pylint
         fi
         """
+    }],
+    [name: 'Scan Checkmarx', steps: {
+        withCredentials([usernamePassword(credentialsId: 'checkmarx', passwordVariable: 'CHECKMARX_CLIENT_SECRET', usernameVariable: 'CHECKMARX_CLIENT_ID')]) {
+            script{
+                sh """#!/bin/bash
+                set -euxo pipefail
+
+                mkdir cx
+                wget -q 'https://download.checkmarx.com/CxOne/CLI/latest/ast-cli_linux_x64.tar.gz' -P cx
+                mkdir cx/checkmarx
+                tar -xzf cx/ast-cli_linux_x64.tar.gz --directory cx/checkmarx
+                wget -q 'https://sca-downloads.s3.amazonaws.com/cli/latest/ScaResolver-linux64.tar.gz' -P cx
+                mkdir cx/scaresolver
+                tar -xzf cx/ScaResolver-linux64.tar.gz --directory cx/scaresolver
+
+                mv cx /opt/
+
+                CHECKMARX_PROJECT_NAME=`/opt/cx/checkmarx/cx project list \
+                    --tenant "ingram-micro" \
+                    --client-id "\$CHECKMARX_CLIENT_ID" \
+                    --client-secret "\$CHECKMARX_CLIENT_SECRET" \
+                    --base-auth-uri "https://iam.checkmarx.net/" \
+                    --base-uri "https://ast.checkmarx.net/" \
+                    --filter "ids=${env.CHECKMARX_PROJECT_ID}" \
+                    --format list | grep "Name" | awk '{\$1=\$2=""; print \$0}' | xargs`
+
+                /opt/cx/checkmarx/cx scan create --file-source "\$WORKSPACE" \
+                    --file-filter '!src/test,!target' \
+                    --agent 'Jenkins' \
+                    --project-name "\$CHECKMARX_PROJECT_NAME" \
+                    --branch "\$GIT_BRANCH" \
+                    --tenant 'ingram-micro' \
+                    --client-id "\$CHECKMARX_CLIENT_ID" \
+                    --client-secret "\$CHECKMARX_CLIENT_SECRET" \
+                    --base-auth-uri 'https://iam.checkmarx.net/' \
+                    --base-uri 'https://ast.checkmarx.net/' \
+                    --sca-resolver '/opt/cx/scaresolver/ScaResolver' \
+                    --sca-resolver-params '--scan-containers' \
+                    --sast-incremental \
+                    --scan-types 'sast,sca,iac-security' \
+                    --async
+                """
+            }
+        }
     }],
     [name: 'Build Package', steps: {
         if (env.PUBLISH_PACKAGE.toBoolean()) {
