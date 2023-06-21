@@ -38,6 +38,32 @@ jobs:
       - name: Test Execution
         run: poetry run pytest
 
+  checkmarx:
+    needs: test
+    
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: [ '3.11' ]
+
+    steps:
+      - name: Source Code Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Environment Setup (Python ${{ matrix.python-version }})
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Dependencies
+        run: |
+          pip install poetry
+          poetry check
+          poetry install
+
       - name: Checkmarx scan
         env:
           CHECKMARX_PROJECT_ID: "5b8d4559-4cdd-4791-8668-cf44a318ef01"
@@ -77,3 +103,4 @@ jobs:
             --sast-incremental \
             --scan-types 'sast,sca,iac-security' \
             --async
+      
